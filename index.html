@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anveshan Tech Fest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Font Setup */
+        :root {
+            --primary: #00f0ff; /* Neon Cyan */
+            --secondary: #ff0055; /* Neon Pink/Red */
+            --dark-bg: #050505;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .nav-item, .brand-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Video Background Styling 
+           Handles 16:4 Aspect Ratio by covering the area and centering.
+           Added filters for "4K" look - sharper contrast and saturation.
+        */
+        #bg-video {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -2;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            object-position: center;
+            /* Enhance video quality to look less washed out */
+            filter: contrast(1.1) saturate(1.2) brightness(0.9);
+        }
+
+        /* Overlay to ensure text readability over video */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Darker default state for realism */
+            background: radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.95) 100%);
+            z-index: -1;
+            pointer-events: none;
+            transition: background 0.05s ease-out; /* Slight smoothing */
+        }
+
+        /* Glitch Effect for the Title */
+        .glitch-wrapper {
+            position: relative;
+        }
+
+        .glitch {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            position: relative;
+            color: white;
+            letter-spacing: 0.1em;
+            z-index: 1;
+        }
+
+        .glitch:before,
+        .glitch:after {
+            display: block;
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.8;
+            z-index: -1;
+        }
+
+        .glitch:before {
+            animation: glitch-it 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+            color: var(--primary);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            transform: translate(-3px, -2px);
+        }
+
+        .glitch:after {
+            animation: glitch-it 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
+            color: var(--secondary);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            transform: translate(3px, 2px);
+        }
+
+        @keyframes glitch-it {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Neon Border Button */
+        .neon-btn {
+            position: relative;
+            display: inline-block;
+            padding: 15px 40px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            overflow: hidden;
+            transition: 0.3s;
+            font-weight: bold;
+            border: 1px solid var(--primary);
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .neon-btn:hover {
+            color: #000;
+            background: var(--primary);
+            box-shadow: 0 0 20px var(--primary), 0 0 60px var(--primary);
+        }
+
+        /* Sidebar Styling */
+        .sidebar-glass {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .side-line-top {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--primary));
+            margin-bottom: 25px;
+            opacity: 0.5;
+        }
+        .side-line-bottom {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to top, transparent, var(--primary));
+            margin-top: 25px;
+            opacity: 0.5;
+        }
+
+        /* Icon Glow Effect */
+        .nav-icon-btn {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            color: rgba(255,255,255,0.6);
+            border: 1px solid transparent;
+        }
+
+        .nav-icon-btn:hover {
+            color: var(--primary);
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Tooltip Styling */
+        .nav-tooltip {
+            position: absolute;
+            left: 60px;
+            top: 50%;
+            transform: translateY(-50%) translateX(-10px);
+            background: rgba(0, 0, 0, 0.9);
+            color: var(--primary);
+            padding: 5px 10px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        .nav-icon-btn:hover .nav-tooltip {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        /* Right side tooltips need to go left */
+        .right-sidebar .nav-tooltip {
+            left: auto;
+            right: 60px;
+            transform: translateY(-50%) translateX(10px);
+        }
+        .right-sidebar .nav-icon-btn:hover .nav-tooltip {
+            transform: translateY(-50%) translateX(0);
+        }
+
+        /* Responsive Tweaks */
+        @media (max-width: 1024px) {
+            .desktop-sidebar { display: none; }
+            .mobile-nav-toggle { display: block; }
+            .glitch { font-size: 3rem; }
+        }
+        
+        @media (min-width: 1025px) {
+            .mobile-nav-toggle { display: none; }
+        }
+    </style>
+</head>
+<body class="antialiased h-screen overflow-hidden">
+
+    <!-- 
+      BACKGROUND VIDEO
+      Ensure you use a high-quality source for the "4K" feel.
+    -->
+    <video autoplay muted loop playsinline id="bg-video">
+        <!-- Replaced with a more "realistic" space placeholder -->
+        <source src="/space_blackhole.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <div class="overlay"></div>
+
+    <!-- LOGO (Always Visible Top Left) -->
+    <div class="fixed top-8 left-8 z-50 flex items-center gap-3 cursor-pointer group">
+        <div class="relative">
+            
+            <div class="absolute inset-0 bg-cyan-400 blur-lg opacity-20 group-hover:opacity-60 transition-opacity"></div>
+        </div>
+        <span class="brand-font text-2xl font-bold tracking-widest text-white group-hover:text-cyan-400 transition-colors drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">TECH FEST</span>
+    </div>
+
+    <!-- LEFT SIDEBAR (Icon Navigation) - Desktop Only -->
+    <div class="fixed left-0 top-0 h-full w-24 hidden lg:flex flex-col justify-center items-center z-40 desktop-sidebar sidebar-glass border-r border-white/5">
+        <div class="side-line-top"></div>
+        
+        <div class="flex flex-col gap-6 items-center w-full">
+            
+            <!-- Home -->
+            <a href="#" class="nav-icon-btn group">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="nav-tooltip">HOME</span>
+            </a>
+
+            <!-- About (Telescope for Space Theme) -->
+            <a href="#about" class="nav-icon-btn group">
+                <i data-lucide="telescope" class="w-5 h-5"></i>
+                <span class="nav-tooltip">ABOUT</span>
+            </a>
+
+            <!-- Events (Zap for Rock/Energy) -->
+            <a href="#events" class="nav-icon-btn group">
+                <i data-lucide="zap" class="w-5 h-5"></i>
+                <span class="nav-tooltip">EVENTS</span>
+            </a>
+
+            <!-- Sponsors (Gem for Value) -->
+            <a href="#sponsors" class="nav-icon-btn group">
+                <i data-lucide="gem" class="w-5 h-5"></i>
+                <span class="nav-tooltip">SPONSORS</span>
+            </a>
+
+            <!-- Contact/Register (Rocket Launch) -->
+            <a href="#contact" class="nav-icon-btn group" style="color: var(--primary); border-color: rgba(0,240,255,0.2);">
+                <i data-lucide="rocket" class="w-5 h-5"></i>
+                <span class="nav-tooltip">REGISTER</span>
+            </a>
+
+        </div>
+
+        <div class="side-line-bottom"></div>
+    </div>
+
+    <!-- RIGHT SIDEBAR (Social Icons) - Desktop Only -->
+    <div class="fixed right-0 top-0 h-full w-24 hidden lg:flex flex-col justify-center items-center z-40 desktop-sidebar sidebar-glass border-l border-white/5 right-sidebar">
+        <div class="side-line-top"></div>
+        
+        <div class="flex flex-col gap-6 items-center w-full">
+            <a href="#" class="nav-icon-btn group">
+                <i data-lucide="instagram" class="w-5 h-5"></i>
+                <span class="nav-tooltip">INSTA</span>
+            </a>
+            <a href="#" class="nav-icon-btn group">
+                <i data-lucide="twitter" class="w-5 h-5"></i>
+                <span class="nav-tooltip">TWITTER</span>
+            </a>
+            <a href="#" class="nav-icon-btn group">
+                <i data-lucide="linkedin" class="w-5 h-5"></i>
+                <span class="nav-tooltip">LINKEDIN</span>
+            </a>
+            <a href="#" class="nav-icon-btn group">
+                <i data-lucide="youtube" class="w-5 h-5"></i>
+                <span class="nav-tooltip">YOUTUBE</span>
+            </a>
+        </div>
+
+        <div class="side-line-bottom"></div>
+    </div>
+
+    <!-- MOBILE MENU BUTTON (Top Right) -->
+    <button class="fixed top-6 right-6 z-50 text-white mobile-nav-toggle p-2 bg-black/20 backdrop-blur-sm rounded border border-white/10 hover:border-cyan-400 transition-colors" onclick="toggleMobileMenu()">
+        <i data-lucide="menu" class="w-8 h-8"></i>
+    </button>
+
+    <!-- MOBILE MENU OVERLAY -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-center items-center gap-8 lg:hidden">
+        <button class="absolute top-6 right-6 text-white" onclick="toggleMobileMenu()">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <a href="#" class="text-2xl font-bold tracking-widest hover:text-cyan-400" onclick="toggleMobileMenu()">HOME</a>
+        <a href="#about" class="text-2xl font-bold tracking-widest hover:text-cyan-400" onclick="toggleMobileMenu()">ABOUT</a>
+        <a href="#events" class="text-2xl font-bold tracking-widest hover:text-cyan-400" onclick="toggleMobileMenu()">EVENTS</a>
+        <a href="#sponsors" class="text-2xl font-bold tracking-widest hover:text-cyan-400" onclick="toggleMobileMenu()">SPONSORS</a>
+        <a href="#contact" class="text-2xl font-bold tracking-widest text-cyan-400" onclick="toggleMobileMenu()">REGISTER</a>
+        
+        <!-- Mobile Socials -->
+        <div class="flex gap-6 mt-8">
+            <a href="#" class="text-gray-400 hover:text-cyan-400"><i data-lucide="instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-cyan-400"><i data-lucide="twitter"></i></a>
+            <a href="#" class="text-gray-400 hover:text-cyan-400"><i data-lucide="linkedin"></i></a>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <main class="relative z-10 h-screen flex flex-col justify-center items-center text-center px-4 lg:px-32">
+        
+        <!-- Animated Subtitle -->
+        <p class="text-cyan-400 tracking-[0.6em] text-xs md:text-sm mb-6 animate-pulse font-bold uppercase drop-shadow-[0_0_5px_rgba(0,240,255,0.5)]">
+            Explore the Universe of Tech
+        </p>
+
+        <!-- Main Title with Glitch -->
+        <div class="glitch-wrapper mb-8 scale-90 md:scale-100">
+            <h1 class="glitch" data-text="ANVESHAN">ANVESHAN</h1>
+        </div>
+
+        <!-- Date / Location -->
+        <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-gray-300 mb-14 font-medium tracking-widest text-sm uppercase">
+            <div class="flex items-center gap-2 group cursor-default">
+                <i data-lucide="calendar" class="w-4 h-4 text-pink-500 group-hover:animate-bounce"></i>
+                <span class="group-hover:text-white transition-colors">March 25-27, 2025</span>
+            </div>
+            <div class="hidden md:block w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+            <div class="flex items-center gap-2 group cursor-default">
+                <i data-lucide="map-pin" class="w-4 h-4 text-pink-500 group-hover:animate-bounce"></i>
+                <span class="group-hover:text-white transition-colors">Hyderabad, India</span>
+            </div>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col md:flex-row gap-6 items-center">
+            <a href="index2.html" class="neon-btn group">
+                LAUNCH
+                <span class="inline-block ml-2 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform duration-300"><i data-lucide="rocket" class="text-cyan-400 w-8 h-8 group-hover:text-pink-500 transition-colors duration-300 relative z-10"></i></span>
+            </a>
+            
+            <!-- Secondary Button styled as HUD element -->
+            <a href="#teaser" class="relative px-10 py-4 text-white tracking-widest font-bold font-[Orbitron] overflow-hidden group">
+                <span class="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/50 group-hover:border-cyan-400 transition-colors"></span>
+                <span class="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/50 group-hover:border-cyan-400 transition-colors"></span>
+                <span class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/50 group-hover:border-cyan-400 transition-colors"></span>
+                <span class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/50 group-hover:border-cyan-400 transition-colors"></span>
+                <span class="relative z-10 group-hover:text-cyan-400 transition-colors">WATCH TEASER</span>
+                <div class="absolute inset-0 bg-white/5 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('translate-x-full');
+        }
+
+        // Mouse Parallax for Background Overlay
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            const overlay = document.querySelector('.overlay');
+            // Modified gradient: 
+            // - Inner circle: (rgba 0.2) Light enough to see video/text, dark enough to be readable
+            // - Outer area: (rgba 0.98) Almost pitch black for high contrast
+            overlay.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0.98) 90%)`;
+        });
+    </script>
+</body>
+</html>
